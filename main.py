@@ -301,6 +301,33 @@ def show_detail(prompts):
     return False
 
 
+def toggle_favorite(prompts):
+    """선택한 프롬프트의 즐겨찾기 상태를 추가/해제한다."""
+    print("\n=== 즐겨찾기 관리 ===")
+    prompt = select_prompt(prompts)
+    if prompt is None:
+        return False
+
+    prompt["favorite"] = not prompt["favorite"]
+    if prompt["favorite"]:
+        print(f"'{prompt['title']}' 프롬프트를 즐겨찾기에 추가했습니다! ⭐")
+    else:
+        print(f"'{prompt['title']}' 프롬프트를 즐겨찾기에서 해제했습니다.")
+    return True
+
+
+def show_favorites(prompts):
+    """즐겨찾기된 프롬프트만 모아서 출력한다."""
+    print("\n=== 즐겨찾기 목록 ===")
+    matches = find_prompts(prompts, lambda prompt: prompt["favorite"])
+    if not matches:
+        print("즐겨찾기한 프롬프트가 없습니다. (메뉴 6번에서 추가할 수 있습니다)")
+        return False
+    print_matches(matches)
+    print(f"\n총 {len(matches)}개의 즐겨찾기")
+    return False
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
@@ -308,6 +335,8 @@ MENU_ITEMS = [
     ("3", "카테고리별 조회", show_by_category),
     ("4", "프롬프트 검색", search_prompt),
     ("5", "프롬프트 상세 보기", show_detail),
+    ("6", "즐겨찾기 추가/해제", toggle_favorite),
+    ("7", "즐겨찾기 목록", show_favorites),
 ]
 
 
