@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 실행 중 생성되는 데이터 (사용자별 데이터이므로 저장소에 올리지 않음)
+prompts.json
+prompts.json.tmp
+prompts.json.broken
+exports/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
