@@ -537,6 +537,32 @@ def delete_prompt(prompts):
     return True
 
 
+TOP_LIMIT = 5
+
+
+def get_top_prompts(prompts, limit=TOP_LIMIT):
+    """조회수가 1 이상인 프롬프트를 조회수 높은 순으로 최대 limit개 반환한다.
+
+    sort는 안정 정렬이라 조회수가 같으면 목록 순서(먼저 등록된 것)가 앞에 온다.
+    """
+    matches = find_prompts(prompts, lambda prompt: prompt["views"] > 0)
+    matches.sort(key=lambda match: match[1]["views"], reverse=True)
+    return matches[:limit]
+
+
+def show_top(prompts):
+    """조회수 기준 인기 프롬프트 Top 목록을 출력한다."""
+    print(f"\n=== 많이 본 프롬프트 Top {TOP_LIMIT} ===")
+    top = get_top_prompts(prompts)
+    if not top:
+        print("아직 조회한 프롬프트가 없습니다. (메뉴 5번 상세 보기로 조회수가 쌓입니다)")
+        return False
+    for rank, (number, prompt) in enumerate(top, start=1):
+        star = " ⭐" if prompt["favorite"] else ""
+        print(f"{rank}위. ({prompt['views']}회) {number}. [{prompt['category']}] {prompt['title']}{star}")
+    return False
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
@@ -549,6 +575,7 @@ MENU_ITEMS = [
     ("8", "카테고리별 Markdown 내보내기", export_markdown),
     ("9", "프롬프트 수정", edit_prompt),
     ("10", "프롬프트 삭제", delete_prompt),
+    ("11", f"많이 본 프롬프트 Top {TOP_LIMIT}", show_top),
 ]
 
 
