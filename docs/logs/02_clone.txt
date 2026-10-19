@@ -1,0 +1,14 @@
+$ git clone https://github.com/octocat/Spoon-Knife.git
+Cloning into 'Spoon-Knife'...
+remote: Enumerating objects: 16, done.        
+remote: Total 16 (delta 0), reused 0 (delta 0), pack-reused 16 (from 1)        
+Receiving objects: 100% (16/16), done.
+Resolving deltas: 100% (3/3), done.
+$ ls Spoon-Knife
+README.md
+index.html
+styles.css
+$ cd Spoon-Knife && git log --oneline
+d0dd1f6 Pointing to the guide for forking
+bb4cc8d Create styles.css and updated README
+a30c19e Created index page for future collaborative edits
