@@ -160,21 +160,30 @@ docs/logs/            개발 환경 확인, 샘플 저장소 clone, 실행 로�
 
 ## 실행 화면 (스크린샷)
 
-아래 화면은 Claude Code 클라우드 실행 환경에서 이 저장소를 새로 clone해 명령을 실제로 실행하고, 그 출력을 터미널 모양 이미지로 만든 것입니다.
+Claude Code 클라우드 세션 안에서 실제 터미널(xterm)을 띄워 이 저장소를 새로 clone하고, 명령을 직접 입력·실행한 화면을 그대로 캡처했습니다.
+(xterm이 컬러 이모지를 그리지 못해 ⭐ 표시는 네모(□)로 보입니다.)
 
 | 화면 | 파일 |
 |---|---|
 | 개발 환경 확인 (Python/Git 버전, user.name/email) | [01_env.png](docs/screenshots/01_env.png) |
 | 공개 샘플 저장소 clone | [02_clone_sample.png](docs/screenshots/02_clone_sample.png) |
-| 과제 저장소 clone 및 테스트 | [03_clone_project.png](docs/screenshots/03_clone_project.png) |
-| 메뉴 출력, 잘못된 입력 처리 | [04_menu.png](docs/screenshots/04_menu.png) |
-| 프롬프트 추가 → 목록 반영 | [05_add_list.png](docs/screenshots/05_add_list.png) |
-| 카테고리별 조회 | [06_category.png](docs/screenshots/06_category.png) |
-| 키워드 검색 | [07_search.png](docs/screenshots/07_search.png) |
-| 즐겨찾기 추가/해제 | [08_favorite.png](docs/screenshots/08_favorite.png) |
-| 상세 보기 조회수, Top 5 (보너스 2) | [09_detail_views_top.png](docs/screenshots/09_detail_views_top.png) |
-| 수정/삭제 (보너스 2) | [10_edit_delete.png](docs/screenshots/10_edit_delete.png) |
-| 재실행 후 데이터 유지, Markdown 내보내기 (보너스 1) | [11_persist_export.png](docs/screenshots/11_persist_export.png) |
-| `git log --oneline --graph` | [12_git_log.png](docs/screenshots/12_git_log.png) |
+| 과제 저장소 clone 및 테스트 24개 통과 | [03_clone_project.png](docs/screenshots/03_clone_project.png) |
+| 메뉴 출력, 잘못된 입력(`99`, `abc`) 처리 | [04_menu.png](docs/screenshots/04_menu.png) |
+| 프롬프트 추가 (빈 값·범위 밖 번호 재입력) | [05_add.png](docs/screenshots/05_add.png) |
+| 추가한 프롬프트가 목록에 반영 | [06_list.png](docs/screenshots/06_list.png) |
+| 카테고리별 조회 | [07_category.png](docs/screenshots/07_category.png) |
+| 검색 — 제목에 포함 | [08_search_title.png](docs/screenshots/08_search_title.png) |
+| 검색 — 내용에 포함 (대소문자 무시) | [09_search_content.png](docs/screenshots/09_search_content.png) |
+| 즐겨찾기 추가 | [10_favorite_on.png](docs/screenshots/10_favorite_on.png) |
+| 즐겨찾기 목록 | [11_favorite_list.png](docs/screenshots/11_favorite_list.png) |
+| 즐겨찾기 해제 | [12_favorite_off.png](docs/screenshots/12_favorite_off.png) |
+| 상세 보기 + 조회수 기록 (보너스 2) | [13_detail_views.png](docs/screenshots/13_detail_views.png) |
+| 조회수 Top 5 (보너스 2) | [14_top.png](docs/screenshots/14_top.png) |
+| 프롬프트 수정 (보너스 2) | [15_edit.png](docs/screenshots/15_edit.png) |
+| 프롬프트 삭제 (보너스 2) | [16_delete.png](docs/screenshots/16_delete.png) |
+| 재실행 시 prompts.json에서 불러오기 (보너스 1) | [17_restart_load.png](docs/screenshots/17_restart_load.png) |
+| 재실행 후 조회수 유지 + Markdown 내보내기 (보너스 1) | [18_top_export.png](docs/screenshots/18_top_export.png) |
+| 내보낸 Markdown 파일 내용 (보너스 1) | [19_export_file.png](docs/screenshots/19_export_file.png) |
+| `git log --oneline --graph` 브랜치 병합 기록 | [20_git_log.png](docs/screenshots/20_git_log.png) |
 
-![git log graph](docs/screenshots/12_git_log.png)
+![git log graph](docs/screenshots/20_git_log.png)
