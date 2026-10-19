@@ -176,9 +176,29 @@ def add_prompt(prompts):
     return True
 
 
+def print_prompt_line(number, prompt):
+    """'번호. [카테고리] 제목 ⭐' 형식으로 한 줄 출력한다."""
+    star = " ⭐" if prompt["favorite"] else ""
+    print(f"{number}. [{prompt['category']}] {prompt['title']}{star}")
+
+
+def show_list(prompts):
+    """저장된 모든 프롬프트를 번호와 함께 출력한다."""
+    print("\n=== 프롬프트 목록 ===")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다. 먼저 프롬프트를 추가해주세요.")
+        return False
+
+    for number, prompt in enumerate(prompts, start=1):
+        print_prompt_line(number, prompt)
+    print(f"\n총 {len(prompts)}개의 프롬프트")
+    return False
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
+    ("2", "프롬프트 목록", show_list),
 ]
 
 
