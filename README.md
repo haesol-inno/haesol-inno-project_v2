@@ -157,3 +157,24 @@ docs/logs/            개발 환경 확인, 샘플 저장소 clone, 실행 로�
 | 전체 기능 실행 (잘못된 입력, 추가, 목록, 카테고리, 검색, 즐겨찾기, 상세, 수정, 삭제, Top, 내보내기) | [03_run_all_features.txt](docs/logs/03_run_all_features.txt) |
 | 재실행 후 데이터 유지 확인 | [04_run_after_restart.txt](docs/logs/04_run_after_restart.txt) |
 | `git log --oneline --graph --all` | [05_git_log.txt](docs/logs/05_git_log.txt) |
+
+## 실행 화면 (스크린샷)
+
+아래 화면은 Claude Code 클라우드 실행 환경에서 이 저장소를 새로 clone해 명령을 실제로 실행하고, 그 출력을 터미널 모양 이미지로 만든 것입니다.
+
+| 화면 | 파일 |
+|---|---|
+| 개발 환경 확인 (Python/Git 버전, user.name/email) | [01_env.png](docs/screenshots/01_env.png) |
+| 공개 샘플 저장소 clone | [02_clone_sample.png](docs/screenshots/02_clone_sample.png) |
+| 과제 저장소 clone 및 테스트 | [03_clone_project.png](docs/screenshots/03_clone_project.png) |
+| 메뉴 출력, 잘못된 입력 처리 | [04_menu.png](docs/screenshots/04_menu.png) |
+| 프롬프트 추가 → 목록 반영 | [05_add_list.png](docs/screenshots/05_add_list.png) |
+| 카테고리별 조회 | [06_category.png](docs/screenshots/06_category.png) |
+| 키워드 검색 | [07_search.png](docs/screenshots/07_search.png) |
+| 즐겨찾기 추가/해제 | [08_favorite.png](docs/screenshots/08_favorite.png) |
+| 상세 보기 조회수, Top 5 (보너스 2) | [09_detail_views_top.png](docs/screenshots/09_detail_views_top.png) |
+| 수정/삭제 (보너스 2) | [10_edit_delete.png](docs/screenshots/10_edit_delete.png) |
+| 재실행 후 데이터 유지, Markdown 내보내기 (보너스 1) | [11_persist_export.png](docs/screenshots/11_persist_export.png) |
+| `git log --oneline --graph` | [12_git_log.png](docs/screenshots/12_git_log.png) |
+
+![git log graph](docs/screenshots/12_git_log.png)

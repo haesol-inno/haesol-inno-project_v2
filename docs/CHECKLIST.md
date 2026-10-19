@@ -16,6 +16,8 @@
 | 10 | 브랜치 생성 및 병합 | [logs/05_git_log.txt](logs/05_git_log.txt) — `feature/*` 5개 병합 |
 | 11 | README 설명·실행 방법 | [../README.md](../README.md) |
 
+스크린샷: [screenshots/](screenshots/) (01~12, 위 항목 순서대로)
+
 자동 테스트: `python3 -m unittest discover -s tests -v` (24개)
 
 ## 항목 2~4. 설계 설명
