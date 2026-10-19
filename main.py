@@ -245,11 +245,33 @@ def show_by_category(prompts):
     return False
 
 
+def matches_keyword(prompt, keyword):
+    """키워드가 제목 또는 내용에 포함되면 True (영문 대소문자 무시)."""
+    keyword = keyword.lower()
+    return keyword in prompt["title"].lower() or keyword in prompt["content"].lower()
+
+
+def search_prompt(prompts):
+    """키워드가 제목 또는 내용에 포함된 프롬프트를 찾는다."""
+    print("\n=== 프롬프트 검색 ===")
+    keyword = input_non_empty("검색어: ")
+
+    matches = find_prompts(prompts, lambda prompt: matches_keyword(prompt, keyword))
+    print("\n검색 결과:")
+    if not matches:
+        print("검색 결과가 없습니다.")
+        return False
+    print_matches(matches)
+    print(f"\n{len(matches)}개의 프롬프트를 찾았습니다.")
+    return False
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
     ("2", "프롬프트 목록", show_list),
     ("3", "카테고리별 조회", show_by_category),
+    ("4", "프롬프트 검색", search_prompt),
 ]
 
 
