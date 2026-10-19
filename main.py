@@ -266,12 +266,48 @@ def search_prompt(prompts):
     return False
 
 
+def select_prompt(prompts):
+    """번호를 입력받아 해당 프롬프트를 반환한다. 잘못된 번호면 None."""
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return None
+    number = input_number(f"번호 입력 (1~{len(prompts)}): ", 1, len(prompts))
+    if number is None:
+        return None
+    return prompts[number - 1]
+
+
+def print_detail(prompt):
+    """프롬프트 한 개의 전체 정보를 출력한다."""
+    line = "─" * 40
+    print()
+    print(line)
+    print(f"제목: {prompt['title']}")
+    print(f"카테고리: {prompt['category']}")
+    print(f"즐겨찾기: {'⭐' if prompt['favorite'] else '-'}")
+    print(line)
+    print("내용:")
+    print(prompt["content"])
+    print(line)
+
+
+def show_detail(prompts):
+    """선택한 프롬프트의 전체 내용을 출력한다."""
+    print("\n=== 프롬프트 상세 보기 ===")
+    prompt = select_prompt(prompts)
+    if prompt is None:
+        return False
+    print_detail(prompt)
+    return False
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
     ("2", "프롬프트 목록", show_list),
     ("3", "카테고리별 조회", show_by_category),
     ("4", "프롬프트 검색", search_prompt),
+    ("5", "프롬프트 상세 보기", show_detail),
 ]
 
 
