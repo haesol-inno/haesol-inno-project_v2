@@ -295,6 +295,7 @@ def print_detail(prompt):
     print(f"제목: {prompt['title']}")
     print(f"카테고리: {prompt['category']}")
     print(f"즐겨찾기: {'⭐' if prompt['favorite'] else '-'}")
+    print(f"조회수: {prompt['views']}회")
     print(line)
     print("내용:")
     print(prompt["content"])
@@ -302,13 +303,14 @@ def print_detail(prompt):
 
 
 def show_detail(prompts):
-    """선택한 프롬프트의 전체 내용을 출력한다."""
+    """선택한 프롬프트의 전체 내용을 출력하고 조회수를 1 올린다."""
     print("\n=== 프롬프트 상세 보기 ===")
     prompt = select_prompt(prompts)
     if prompt is None:
         return False
+    prompt["views"] += 1
     print_detail(prompt)
-    return False
+    return True
 
 
 def toggle_favorite(prompts):
