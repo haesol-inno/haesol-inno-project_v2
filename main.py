@@ -195,10 +195,61 @@ def show_list(prompts):
     return False
 
 
+def find_prompts(prompts, condition):
+    """condition(prompt)가 참인 프롬프트를 (전체 목록 기준 번호, 프롬프트) 목록으로 반환한다.
+
+    전체 목록 기준 번호를 유지해서, 결과에 보이는 번호를
+    상세 보기/즐겨찾기/수정/삭제에 그대로 입력할 수 있게 한다.
+    """
+    return [
+        (number, prompt)
+        for number, prompt in enumerate(prompts, start=1)
+        if condition(prompt)
+    ]
+
+
+def print_matches(matches):
+    """find_prompts()의 결과를 출력한다."""
+    for number, prompt in matches:
+        print_prompt_line(number, prompt)
+
+
+def get_all_categories(prompts):
+    """기본 카테고리에 사용자가 직접 입력한 카테고리를 더한 목록을 반환한다."""
+    categories = list(CATEGORIES)
+    for prompt in prompts:
+        if prompt["category"] not in categories:
+            categories.append(prompt["category"])
+    return categories
+
+
+def show_by_category(prompts):
+    """선택한 카테고리의 프롬프트만 출력한다."""
+    print("\n=== 카테고리별 조회 ===")
+    categories = get_all_categories(prompts)
+    for number, category in enumerate(categories, start=1):
+        print(f"{number}) {category}")
+
+    number = input_number("선택: ", 1, len(categories))
+    if number is None:
+        return False
+    category = categories[number - 1]
+
+    matches = find_prompts(prompts, lambda prompt: prompt["category"] == category)
+    print(f"\n[{category}] 카테고리 프롬프트:")
+    if not matches:
+        print("이 카테고리에 등록된 프롬프트가 없습니다.")
+        return False
+    print_matches(matches)
+    print(f"\n총 {len(matches)}개의 프롬프트")
+    return False
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
     ("2", "프롬프트 목록", show_list),
+    ("3", "카테고리별 조회", show_by_category),
 ]
 
 
