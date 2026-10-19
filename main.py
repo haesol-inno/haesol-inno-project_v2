@@ -8,6 +8,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, "prompts.json")
+EXPORT_DIR = os.path.join(BASE_DIR, "exports")
 
 # 카테고리 체계는 이 목록 한 곳에서만 관리한다.
 CATEGORIES = ["텍스트 생성", "이미지 생성", "코드 작성", "학습/요약", "업무 자동화", "기타"]
@@ -406,6 +407,82 @@ def save_prompts(prompts, path):
     os.replace(temp_path, path)
 
 
+def safe_filename(name):
+    """파일 이름에 쓸 수 없는 문자를 '_'로 바꾼다. (예: '학습/요약' → '학습_요약')"""
+    cleaned = "".join("_" if char in '\\/:*?"<>|' else char for char in name).strip()
+    return cleaned or "카테고리"
+
+
+def code_fence(text):
+    """내용 안의 ``` 보다 긴 백틱 울타리를 만들어 코드 블록이 중간에 끊기지 않게 한다."""
+    longest = run = 0
+    for char in text:
+        run = run + 1 if char == "`" else 0
+        longest = max(longest, run)
+    return "`" * max(3, longest + 1)
+
+
+def build_category_markdown(category, matches):
+    """한 카테고리의 프롬프트들을 Markdown 문서 문자열로 만든다."""
+    lines = [f"# {category}", "", f"총 {len(matches)}개의 프롬프트", ""]
+    for number, prompt in matches:
+        star = " ⭐" if prompt["favorite"] else ""
+        fence = code_fence(prompt["content"])
+        lines += [
+            f"## {number}. {prompt['title']}{star}",
+            "",
+            f"- 즐겨찾기: {'예' if prompt['favorite'] else '아니오'}",
+            f"- 조회수: {prompt['views']}",
+            "",
+            fence + "text",
+            prompt["content"],
+            fence,
+            "",
+        ]
+    return "\n".join(lines)
+
+
+def export_markdown_files(prompts, export_dir):
+    """카테고리별 Markdown 파일을 만들고, 만든 파일 경로 목록을 반환한다.
+
+    export_dir는 내보내기 전용 폴더라서, 지난번에 만든 .md 파일은 지우고 새로 만든다
+    (삭제되거나 이름이 바뀐 카테고리 파일이 남지 않도록).
+    """
+    os.makedirs(export_dir, exist_ok=True)
+    for name in os.listdir(export_dir):
+        if name.endswith(".md"):
+            os.remove(os.path.join(export_dir, name))
+
+    paths = []
+    for category in get_all_categories(prompts):
+        matches = find_prompts(prompts, lambda prompt: prompt["category"] == category)
+        if not matches:
+            continue
+        path = os.path.join(export_dir, safe_filename(category) + ".md")
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(build_category_markdown(category, matches))
+        paths.append(path)
+    return paths
+
+
+def export_markdown(prompts):
+    """전체 프롬프트를 카테고리별 Markdown 파일로 내보낸다."""
+    print("\n=== Markdown 내보내기 ===")
+    if not prompts:
+        print("내보낼 프롬프트가 없습니다.")
+        return False
+    try:
+        paths = export_markdown_files(prompts, EXPORT_DIR)
+    except OSError as error:
+        print(f"내보내기에 실패했습니다: {error}")
+        return False
+
+    print(f"{os.path.basename(EXPORT_DIR)}/ 폴더에 {len(paths)}개 파일을 만들었습니다.")
+    for path in paths:
+        print(f"- {os.path.relpath(path, BASE_DIR)}")
+    return False
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
@@ -415,6 +492,7 @@ MENU_ITEMS = [
     ("5", "프롬프트 상세 보기", show_detail),
     ("6", "즐겨찾기 추가/해제", toggle_favorite),
     ("7", "즐겨찾기 목록", show_favorites),
+    ("8", "카테고리별 Markdown 내보내기", export_markdown),
 ]
 
 
