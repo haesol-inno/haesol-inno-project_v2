@@ -483,6 +483,58 @@ def export_markdown(prompts):
     return False
 
 
+def input_or_keep(label, current):
+    """새 값을 입력받는다. 아무것도 입력하지 않으면(Enter) 현재 값을 그대로 둔다."""
+    value = input(f"{label} (Enter = 그대로 유지): ").strip()
+    return value if value else current
+
+
+def edit_prompt(prompts):
+    """선택한 프롬프트의 제목/내용/카테고리를 수정한다."""
+    print("\n=== 프롬프트 수정 ===")
+    prompt = select_prompt(prompts)
+    if prompt is None:
+        return False
+
+    print(f"\n현재 제목: {prompt['title']}")
+    title = input_or_keep("새 제목", prompt["title"])
+    if not check_duplicate_title(prompts, title, exclude=prompt):
+        print("수정을 취소했습니다.")
+        return False
+
+    print(f"\n현재 내용: {prompt['content']}")
+    content = input_or_keep("새 내용", prompt["content"])
+
+    print(f"\n현재 카테고리: {prompt['category']}")
+    category = prompt["category"]
+    if confirm("카테고리를 변경할까요?"):
+        category = choose_category()
+
+    if (title, content, category) == (prompt["title"], prompt["content"], prompt["category"]):
+        print("\n변경된 내용이 없습니다.")
+        return False
+    prompt["title"] = title
+    prompt["content"] = content
+    prompt["category"] = category
+    print("\n프롬프트가 수정되었습니다!")
+    return True
+
+
+def delete_prompt(prompts):
+    """선택한 프롬프트를 확인 후 삭제한다."""
+    print("\n=== 프롬프트 삭제 ===")
+    prompt = select_prompt(prompts)
+    if prompt is None:
+        return False
+    if not confirm(f"'{prompt['title']}' 프롬프트를 삭제할까요?"):
+        print("삭제를 취소했습니다.")
+        return False
+
+    prompts.remove(prompt)
+    print("프롬프트가 삭제되었습니다. (뒤의 프롬프트 번호가 하나씩 당겨집니다)")
+    return True
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
@@ -493,6 +545,8 @@ MENU_ITEMS = [
     ("6", "즐겨찾기 추가/해제", toggle_favorite),
     ("7", "즐겨찾기 목록", show_favorites),
     ("8", "카테고리별 Markdown 내보내기", export_markdown),
+    ("9", "프롬프트 수정", edit_prompt),
+    ("10", "프롬프트 삭제", delete_prompt),
 ]
 
 
