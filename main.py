@@ -1,4 +1,13 @@
-"""나만의 프롬프트 관리 프로그램 (콘솔)"""
+"""나만의 프롬프트 관리 프로그램 (콘솔)
+
+프롬프트는 prompts.json 파일에 저장되므로 프로그램을 종료해도 유지된다.
+"""
+
+import json
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(BASE_DIR, "prompts.json")
 
 # 카테고리 체계는 이 목록 한 곳에서만 관리한다.
 CATEGORIES = ["텍스트 생성", "이미지 생성", "코드 작성", "학습/요약", "업무 자동화", "기타"]
@@ -328,6 +337,75 @@ def show_favorites(prompts):
     return False
 
 
+def normalize_prompts(data):
+    """JSON에서 읽은 값을 검사해 프롬프트 목록으로 만든다. 형식이 틀리면 ValueError."""
+    if not isinstance(data, list):
+        raise ValueError("최상위 값이 리스트가 아닙니다.")
+
+    prompts = []
+    for item in data:
+        if not isinstance(item, dict) or not all(
+            isinstance(item.get(key), str) for key in ("title", "content", "category")
+        ):
+            raise ValueError("title, content, category가 없는 항목이 있습니다.")
+        views = item.get("views", 0)
+        prompts.append({
+            "id": item.get("id"),
+            "title": item["title"],
+            "content": item["content"],
+            "category": item["category"],
+            "favorite": item.get("favorite") is True,
+            "views": views if isinstance(views, int) and views >= 0 else 0,
+        })
+
+    # id가 없거나 겹치는 항목에는 새 id를 붙인다.
+    used_ids = set()
+    for prompt in prompts:
+        if isinstance(prompt["id"], int) and prompt["id"] not in used_ids:
+            used_ids.add(prompt["id"])
+        else:
+            prompt["id"] = None
+    for prompt in prompts:
+        if prompt["id"] is None:
+            prompt["id"] = max(used_ids, default=0) + 1
+            used_ids.add(prompt["id"])
+    return prompts
+
+
+def load_prompts(path):
+    """JSON 파일에서 프롬프트를 불러온다. 파일이 없거나 손상되었으면 기본 데이터로 시작한다."""
+    if not os.path.exists(path):
+        print("저장된 데이터가 없어 기본 프롬프트로 시작합니다.")
+        return create_default_prompts()
+
+    try:
+        with open(path, encoding="utf-8") as file:
+            prompts = normalize_prompts(json.load(file))
+    except (OSError, ValueError) as error:  # json.JSONDecodeError도 ValueError의 일종
+        backup_path = path + ".broken"
+        print(f"데이터 파일을 읽을 수 없습니다: {error}")
+        try:
+            os.replace(path, backup_path)
+            print(f"손상된 파일은 {os.path.basename(backup_path)}로 보관하고 기본 프롬프트로 시작합니다.")
+        except OSError:
+            print("기본 프롬프트로 시작합니다.")
+        return create_default_prompts()
+
+    print(f"{os.path.basename(path)}에서 프롬프트 {len(prompts)}개를 불러왔습니다.")
+    return prompts
+
+
+def save_prompts(prompts, path):
+    """프롬프트 목록을 JSON 파일로 저장한다.
+
+    임시 파일에 먼저 쓴 뒤 바꿔치기해서, 저장 도중 문제가 생겨도 기존 파일이 깨지지 않게 한다.
+    """
+    temp_path = path + ".tmp"
+    with open(temp_path, "w", encoding="utf-8") as file:
+        json.dump(prompts, file, ensure_ascii=False, indent=2)
+    os.replace(temp_path, path)
+
+
 # 메뉴 번호 → (이름, 처리 함수). 처리 함수는 데이터를 바꿨으면 True를 반환한다.
 MENU_ITEMS = [
     ("1", "프롬프트 추가", add_prompt),
@@ -357,8 +435,8 @@ def find_menu_handler(choice):
     return None
 
 
-def main():
-    prompts = create_default_prompts()
+def main(data_file=DATA_FILE):
+    prompts = load_prompts(data_file)
 
     while True:
         show_menu()
@@ -372,7 +450,12 @@ def main():
         if handler is None:
             print(f"잘못된 입력입니다. 메뉴 번호(0~{len(MENU_ITEMS)})를 입력해주세요.")
             continue
-        handler(prompts)
+        if handler(prompts):
+            try:
+                save_prompts(prompts, data_file)
+                print(f"(변경 내용을 {os.path.basename(data_file)}에 저장했습니다)")
+            except OSError as error:
+                print(f"저장에 실패했습니다: {error}")
 
 
 if __name__ == "__main__":
